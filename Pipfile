@@ -9,6 +9,8 @@ verify_ssl = true
 numpy = "*"
 tensorflow = "*"
 matplotlib = "*"
+scikit-learn = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
