@@ -12,8 +12,9 @@ class GeneralStats():
 
     def get_statistics(self, axis):
         self.general_statistics(axis)
-        print("min: ", self._min, "\n max: ", self._max, "\n range: ", self._range)
-        print("median: ", self._median, "\n mean: ", self._mean, "\n std: ", self._std)
+        print("Shape: ", self.data.shape)
+        print("min: ", self._min, "\nmax: ", self._max, "\nrange: ", self._range)
+        print("median: ", self._median, "\nmean: ", self._mean, "\nstd: ", self._std)
 
 
     def general_statistics(self, axis):
