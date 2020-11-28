@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from FileHandler import FileHandler
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.model_selection import cross_val_score
 from sys import exit
 
 # https://www.datatechnotes.com/2020/06/classification-example-with-svc-in-python.html
@@ -29,7 +30,7 @@ chi2_data = np.empty([rows, num_feats])
 for i, j in enumerate(chi2_attr_idx): # fill with important features columns
     chi2_data[:, i] = data[:, j]
 
-data_train, data_test, outcome_train, outcome_test = train_test_split(chi2_data, winners_data, test_size=.3, random_state=42)
+data_train, data_test, outcome_train, outcome_test = train_test_split(data, winners_data, test_size=.3, random_state=42)
 
 print(chi2_data.shape)
 print(data_train.shape)
@@ -44,3 +45,16 @@ conf_matx = confusion_matrix(outcome_test, outcome_predction)
 print(conf_matx)
 cr = classification_report(outcome_test, outcome_predction)
 print(cr)
+
+# add cross validation to training
+print("\nCROSS VALIDATION TRAINING\n")
+cv_svc = SVC()
+cv_svc.fit(data_train, outcome_train)
+cv_scores = cross_val_score(cv_svc, data_train, outcome_train, cv=10)
+print("CV average score: %.2f" % cv_scores.mean())
+
+prediction = cv_svc.predict(data_test)
+cm = confusion_matrix(outcome_test, prediction)
+print(cm)
+cr = classification_report(outcome_test, prediction)
+print(cr) 

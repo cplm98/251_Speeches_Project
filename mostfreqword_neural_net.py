@@ -117,23 +117,25 @@ def test_connected_net(nums, data, outcomes, feature_selectors=None):
 
 # Base line, all features, uncomment to run
 
-# model = tf.keras.Sequential([
-#     tf.keras.layers.Dense(1000, activation='relu'),
-#     tf.keras.layers.Dense(1000/2, activation='relu'),
-#     tf.keras.layers.Dense(2)
-# ])
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(1000, activation='relu'),
+    tf.keras.layers.Dense(1000/2, activation='relu'),
+    tf.keras.layers.Dense(2)
+])
 
-# model.compile(
-#     optimizer = 'adam', # how model is updated based on loss function
-#     loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), # measures accuracy of the model, and steering during training
-#     metrics = ['accuracy'] # what it's using to measure success
-# )
+model.compile(
+    optimizer = 'adam', # how model is updated based on loss function
+    loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), # measures accuracy of the model, and steering during training
+    metrics = ['accuracy'] # what it's using to measure success
+)
 
-# # This works as a base, accuracy 92% with 20 epochs
-# print("Training Model")
-# model.fit(data_train, outcome_train, epochs=100)
-# test_loss, test_acc = model.evaluate(data_test, outcome_test, verbose=2)
-# print("Test Accuracy: ", test_acc)
+# This works as a base, accuracy 92% with 20 epochs
+print("Training Model")
+model.fit(data_train, outcome_train, epochs=100)
+test_loss, test_acc = model.evaluate(data_test, outcome_test, verbose=2)
+print("Test Accuracy: ", test_acc)
+pred=model.predict_classes(data_test)
+print(tf.math.confusion_matrix(labels=outcome_test, predictions=pred).numpy())
 
 
 feature_selector = FeatureSelection(data, winners_data)
@@ -141,7 +143,7 @@ feature_selector = FeatureSelection(data, winners_data)
 
 ### DRIVER CODE ####
 
-nums = [10, 100, 300, 500, 700, 800, 900, 1000]
-feature_selectors = [feature_selector.pearson_selector, feature_selector.chi_squared, feature_selector.recursive_feature_elim, feature_selector.rf_selector]
-test_connected_net(nums, data, winners_data, feature_selectors)
+# nums = [10, 100, 300, 500, 700, 800, 900, 1000]
+# feature_selectors = [feature_selector.pearson_selector, feature_selector.chi_squared, feature_selector.recursive_feature_elim, feature_selector.rf_selector]
+# test_connected_net(nums, data, winners_data, feature_selectors)
 

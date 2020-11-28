@@ -7,27 +7,36 @@ import numpy as np
 from sklearn.model_selection import KFold 
 from sys import exit
 
-# https://www.askpython.com/python/examples/k-fold-cross-validation
-
 winners = FileHandler("./data/winners.csv", int)
 winners.read_csv()
 winners_data = winners.get_data()
 
-freq_wrd_matrix = FileHandler("./data/mostfreq1000docword.csv", float)
-freq_wrd_matrix.read_csv()
-data = freq_wrd_matrix.get_data()
+deception_wrd_matrix = FileHandler("./data/deceptiondocword.csv", int)
+deception_wrd_matrix.read_csv()
+data = deception_wrd_matrix.get_data()
+rows, cols = data.shape
 
-# save eval data as unseen data for testing at the end
-data_cross, data_eval, outcome_cross, outcome_eval = train_test_split(data, winners_data, test_size=.2, random_state=42)
+col_sum = data.sum(axis = 0)
+normalized_data = data / col_sum
+print(normalized_data)
 
 
-k = 3
+feature_selector = FeatureSelection(normalized_data, winners_data)
+attr_idx = feature_selector.rf_selector(50)
+attributes = np.empty([rows, 50])
+for i, j in enumerate(attr_idx): # fill with important features columns
+    attributes[:, i] = data[:, j]
+
+data_cross, data_eval, outcome_cross, outcome_eval = train_test_split(attributes, winners_data, test_size=.2, random_state=42)
+
+
+k = 8
 kf = KFold(n_splits=k, shuffle=True, random_state=42)
 
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Dense(1000, activation='relu'),
-    tf.keras.layers.Dense(1000/2, activation='relu'),
+    tf.keras.layers.Dense(76, activation='relu'),
+    tf.keras.layers.Dense(76/2, activation='relu'),
     tf.keras.layers.Dense(2)
 ])
 

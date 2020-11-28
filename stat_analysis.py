@@ -2,6 +2,8 @@ from FileHandler import FileHandler
 import numpy as np
 import matplotlib.pyplot as plts
 from GeneralStats import GeneralStats
+from sys import exit
+import re
 
 winners = FileHandler("./data/winners.csv", int)
 winners.read_csv()
@@ -11,6 +13,47 @@ most_freq_wrd_matrix = FileHandler("./data/mostfreq1000docword.csv", float)
 most_freq_wrd_matrix.read_csv()
 data = most_freq_wrd_matrix.get_data()
 rows, cols = data.shape
+
+speeches_csv = FileHandler("./data/speeches.csv", str)
+speeches_csv.read_csv()
+speeches_names = speeches_csv.get_data()
+
+speech_counts = {}
+for i, speech in enumerate(speeches_names):
+    tmp = speech[4:]
+    # print(tmp)
+    name = ""
+    for char in tmp:
+        if char.isalpha():
+            name += char
+        else:
+            break
+    if name in speech_counts:
+        speech_counts[name].append(i)
+    else:
+        speech_counts[name] = [i]
+    
+# for candidate in speech_counts:
+#     string = candidate + '_speech_indeces.csv'
+#     print(string)
+#     np.savetxt(string, speech_counts[candidate], delimiter=',', fmt='%s')
+
+for candidate in speech_counts:
+    arr = speech_counts[candidate]
+    candidate_records = np.empty((len(arr), 1000))
+    for i, j in enumerate(arr):
+                candidate_records[i, :] = data[j, :]
+    col_sum = candidate_records.sum(axis = 0) / len(arr)
+    row_sum = candidate_records.sum(axis = 1)
+    ccol_stats = GeneralStats(col_sum)
+    print("\n" + candidate + " Column Stats")
+    ccol_stats.get_statistics(0)
+    crow_stats = GeneralStats(row_sum)
+    print(candidate + " Row Stats")
+    crow_stats.get_statistics(0)
+    
+
+exit(0)
 
 col_sum = data.sum(axis = 0)
 row_sum = data.sum(axis = 1)
